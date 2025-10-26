@@ -1,11 +1,11 @@
 // this will help model macbooks 14 and 16. As well as provide presentation controls
-import { useRef} from "react";
-import {PresentationControls} from "@react-three/drei";
+import { useRef } from "react";
+import { PresentationControls } from "@react-three/drei";
 import gsap from 'gsap';
 
 import MacbookModel16 from "../models/Macbook-16.jsx";
 import MacbookModel14 from "../models/Macbook-14.jsx";
-import {useGSAP} from "@gsap/react";
+import { useGSAP } from "@gsap/react";
 
 const ANIMATION_DURATION = 1;
 const OFFSET_DISTANCE = 5;
@@ -16,7 +16,7 @@ const fadeMeshes = (group, opacity) => {
     group.traverse((child) => {
         if (child.isMesh) {
             child.material.transparent = true;
-            gsap.to(child.material, {opacity, duration: ANIMATION_DURATION})
+            gsap.to(child.material, { opacity, duration: ANIMATION_DURATION })
         }
     })
 }
@@ -24,10 +24,10 @@ const fadeMeshes = (group, opacity) => {
 const moveGroup = (group, x) => {
     if (!group) return;
 
-    gsap.to(group.position, {x, duration: ANIMATION_DURATION, ease: "power2.inOut"});
+    gsap.to(group.position, { x, duration: ANIMATION_DURATION, ease: "power2.inOut" });
 }
 
-const ModelSwitcher = ({ scale, isMobile}) => {
+const ModelSwitcher = ({ scale, isMobile }) => {
 
   const SCALE_LARGE_DESKTOP = 0.08;
   const SCALE_SMALL_DESKTOP = 0.06;
@@ -35,7 +35,8 @@ const ModelSwitcher = ({ scale, isMobile}) => {
   const smallMacbookRef = useRef();
   const largeMacbookRef = useRef();
   
-  const showLargeMacbook = scale === SCALE_LARGE_DESKTOP || scale === SCALE_SMALL_DESKTOP;
+  // Fixed: Only show large MacBook when scale is 0.08 (16")
+  const showLargeMacbook = scale === SCALE_LARGE_DESKTOP;
 
   useGSAP(() => {
     if (showLargeMacbook) {
@@ -52,14 +53,14 @@ const ModelSwitcher = ({ scale, isMobile}) => {
         fadeMeshes(smallMacbookRef.current, 1);
         fadeMeshes(largeMacbookRef.current, 0);
     }
-  }, [scale])
+  }, [scale, showLargeMacbook])
 
   const controlsConfig = {
     snap: true,
     speed: 1,
     zoom: 1,
     azimuth: [-Infinity, Infinity],
-    config: { mass: 1, tension: 0, friction: 26 },
+    config: { mass: 1, tension: 170, friction: 26 },
   }
   
   return (
